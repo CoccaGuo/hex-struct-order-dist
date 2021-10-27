@@ -45,7 +45,7 @@ class Lattice(I_Lattice):
     
 
 if __name__ == '__main__':
-    l = Lattice(n=6, a=1, size=10)
+    l = Lattice(n=6, a=1, size=3)
     lp_center = l.fetch_lp_list()
     lp_list = l.get_lattice_point_list()
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     ax = fig.add_subplot(1,1,1)
     for lp in lp_list:
         lp.plot(ax)
-    ax.scatter(x, y)
+    ax.scatter(x, y, color='k')
     plt.show()
 
 

@@ -32,4 +32,4 @@ class LatticePoints(I_LatticePoint):
         for border in self.border_list:
             pt1, pt2 = border.get_border_points()
             # ax.plot((pt1.x, pt2.x), (pt2.x, pt2.y), args)
-            # ax.scatter(border.center.x, border.center.y)
+            ax.scatter(border.center.x, border.center.y)
