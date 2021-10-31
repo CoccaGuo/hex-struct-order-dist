@@ -14,3 +14,9 @@ a=40, b=-4
 ## 多个点生长
 a=4, b=-2
 ![2D 趋势](./readme.assert/Figure_3.png)
+
+## 一些统计性质的工作
+
+![](./readme.assert/calc_2.png)
+
+![](./readme.assert/calc_4.png)

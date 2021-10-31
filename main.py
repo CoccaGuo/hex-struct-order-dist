@@ -101,17 +101,28 @@ def search_a_list(point_list, net):
     return real_next_point, net
 
 
-def plot_mtx(mat):
+def plot_mtx(mat, step):
     xm, ym = mat.shape
     xlist = list()
     ylist = list()
     vlist = list()
+    six_ring_list = list()
     for i in range(xm):
         for j in range(ym):
             if mat[i, j] != 0:
                 xlist.append(i+0.5*j)
                 ylist.append(j*np.sqrt(3)/2)
                 vlist.append(mat[i, j])
+            # 统计周围六元环数目
+            if mat[i, j] == 6:
+                counter = 0
+                for ii, jj in zip((i, i, i+1, i-1, i+1, i-1), (j+1, j-1, j, j, j-1, j+1)):
+                    if ii >= xm:
+                        ii = ii % xm
+                    if jj >= ym:
+                        jj = jj % ym
+                    counter += int(mat[ii, jj] == 6)
+                six_ring_list.append(counter)
 
     def map_int_to_color(x):
         if x == 4:
@@ -125,11 +136,20 @@ def plot_mtx(mat):
         if x == 8:
             return 'orange'
     clist = list(map(map_int_to_color, vlist))
+    # plt.subplot(1, 2, 1)
     plt.axis('scaled')
     plt.xlim((0, 1.5*xm))
     plt.ylim((0, 0.867*ym))
+    plt.axis('off')
     plt.scatter(xlist, ylist, c=clist, marker='o')
+    # plt.subplot(1, 2, 2)
+    # plt.ylim((0, 6))
+    # plt.scatter(step, np.average(six_ring_list), c='k')
+    # plt.title("average by step")
     plt.pause(0.1)
+    return np.average(six_ring_list)
+
+
 
 
 if __name__ == '__main__':
@@ -139,22 +159,28 @@ if __name__ == '__main__':
     # \delta E = angular_energy * f(\theta - \theta_0), \theta_0 = 2*pi/3
     net = np.zeros((size, size))  # 用于标记哪些是已经成键的区域
     # init_point = Point(size//2, size//2) # 在中心开始晶化
-    init_point = Point(3*size//5, 3*size//5)  # 在中心开始晶化
+    # init_point = Point(3*size//5, 3*size//5)  # 在中心开始晶化
     init_point_2 = Point(2*size//5, 2*size//5) # 在中心开始晶化
-    init_point_3 = Point(size//5, size//5) # 在中心开始晶化
+    # init_point_3 = Point(size//5, size//5) # 在中心开始晶化
     # net[size//2, size//2] = 6
-    net[3*size//5, 3*size//5] = 6
+    # net[3*size//5, 3*size//5] = 6
     net[2*size//5, 2*size//5] = 6
-    net[size//5, size//5] = 6
+    # net[size//5, size//5] = 6
     point_list = list()
-    point_list.append(init_point)
+    # point_list.append(init_point)
     point_list.append(init_point_2)
-    point_list.append(init_point_3)
+    # point_list.append(init_point_3)
     plt.show()
-    for i in range(400):
+    six_ring_list = list()
+    steps = 152
+    for i in range(steps):
         try:
             point, net = search_a_list(point_list, net)
-            plot_mtx(net)
+            aver = plot_mtx(net, i)
+            plt.plot(np.array(list(range(i)))*1.5*size/steps, np.array(six_ring_list)*size*0.867/6, c='k')
+            plt.title(f"average phase count: {np.average(six_ring_list):.2f}@step{i}/{steps}")
+            plt.text(1, 1, f"current para:\n b(+2D): {bond_energy}\n a(+1D): {angular_energy}")
+            six_ring_list.append(aver)
         except IndexError as e:
             print(e)
             plt.show()
